@@ -1,0 +1,5 @@
+{
+  "name": "clean-view-market",
+  "owner": { "name": "DMasterIO" },
+  "plugins": [{ "name": "clean-view", "source": "./" }]
+}
