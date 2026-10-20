@@ -563,6 +563,15 @@ export function registerCleanView(on: On): void {
       )
     }
 
+    // Keep drawing what the plugins beneath draw (e.g. status-vitals) below the checklist.
+    const below = await next(e)
+    const stack = (view: RenderElement) => (
+      <Box flexDirection="column">
+        {view}
+        {below}
+      </Box>
+    )
+
     const headerRow = (left: RenderElement) => (
       <Box flexDirection="row" justifyContent="space-between">
         <Box flexGrow={1} flexShrink={1}>
@@ -572,13 +581,15 @@ export function registerCleanView(on: On): void {
       </Box>
     )
 
-    if (c.phase === 'idle') return headerRow(<Text> </Text>)
+    if (c.phase === 'idle') return stack(headerRow(<Text> </Text>))
 
     const elapsed = formatDuration((c.finishedAt ?? now) - c.startedAt)
 
     if (c.phase === 'done' && c.isCollapsed) {
-      return headerRow(
-        <Text wrap="truncate" color="green">{`✓ All done · ${c.title} · took ${elapsed}`}</Text>,
+      return stack(
+        headerRow(
+          <Text wrap="truncate" color="green">{`✓ All done · ${c.title} · took ${elapsed}`}</Text>,
+        ),
       )
     }
 
@@ -639,11 +650,11 @@ export function registerCleanView(on: On): void {
       )
     })
 
-    return (
+    return stack(
       <Box flexDirection="column">
         {headerRow(header)}
         {rows}
-      </Box>
+      </Box>,
     )
   })
 }
